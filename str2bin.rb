@@ -1,4 +1,6 @@
-CHAR2BIN = {
+# -*- coding: utf-8 -*-
+class String
+  Str2Bin = {
   :x00 => "\x00", :x01 => "\x01", :x02 => "\x02", :x03 => "\x03", 
   :x04 => "\x04", :x05 => "\x05", :x06 => "\x06", :x07 => "\x07",
   :x08 => "\x08", :x09 => "\x09", :x0a => "\x0a", :x0b => "\x0b", 
@@ -63,25 +65,29 @@ CHAR2BIN = {
   :xf4 => "\xf4", :xf5 => "\xf5", :xf6 => "\xf6", :xf7 => "\xf7",
   :xf8 => "\xf8", :xf9 => "\xf9", :xfa => "\xfa", :xfb => "\xfb", 
   :xfc => "\xfc", :xfd => "\xfd", :xfe => "\xfe", :xff => "\xff" }
- 
-tmp   = [nil,nil]
-ix    = 0
-ofile = File.open(ARGV[0],'wb')
-File.open(ARGV[1],'r') do |ifile|
-  ifile.each do |line|
-    line.chomp!
-    line.each_char do |c|
-      tmp[ix] = c
-      if ix == 0 then
-        ix = 1
-      else
-        ix = 0
-        ofile.write CHAR2BIN[:"x#{tmp.join.downcase}"]
-        tmp = [nil,nil]
-      end
+
+  unless method_defined? 'each_char'
+    def each_char
+      scan(/./).each{|ch| yield ch}
     end
   end
+  def to_bin
+    chomp!
+    tmp    = [nil,nil]
+    index  = 0
+    result = ""
+    each_char do |ch|
+      tmp[index] = ch
+      if index == 0 then
+        index += 1
+      else
+        index -= 1
+        result << Str2Bin[:"x#{tmp.join.downcase}"]
+        tmp[0], tmp[1] = nil, nil
+      end
+    end
+    result
+  end
+
 end
-ofile.write CHAR2BIN[:"x#{tmp[0].downcase}0"] if tmp[0]
-ofile.close
 
